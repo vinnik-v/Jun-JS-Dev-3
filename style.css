@@ -1,0 +1,58 @@
+/*задаем визуальные параметры формы*/
+
+.main-conteiner {
+  width: 600px;
+  height: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #cccccc;
+}
+
+.lines {
+  width: 600px;
+  height: 600px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.block {
+	margin: -0.5px;
+    float: left;
+    width: 149px;
+    height: 149px;
+    border: 1px solid slategrey;
+    text-align: center;
+    line-height: 32px;
+}
+
+.red{ background: #f44842;}
+.pink{ background: #ffcccc;}
+.brown{ background: #823100;}
+.yellow{ background: #f2f418;}
+.green{	background: #04dd3f;}
+.blue{ background: #038ff9;}
+.violet{ background: #610082;}
+.dark-blue{ background: #1a00b2;}
+
+.white{
+
+	background: white;}
+
+}
+
+
+
+
+/*
+
+red
+pink
+orange
+yellow
+green
+blue
+lime
+cyan
+
+*/
