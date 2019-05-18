@@ -1,74 +1,55 @@
 
-var divClick = document.querySelectorAll('.block');
+var divClick = document.querySelectorAll('.block'); 		//ищем в документе все элементы с классом .block и запихиваем в массив divClick
 
-var start = document.querySelector('.buttons');
+var start = document.querySelector('.buttons');				//ищем в документе элемент с классом .buttons и присваиваем переменной start
 
-var colors = ['red','pink','brown','yellow','green','blue','violet','dark-blue'];
+var colors = ['red','pink','brown','yellow','green','blue','violet','dark-blue']; //задаем массив с цветами
 
-var timer = function(millis){
+start.onclick = function() {		
 
-		var minutes = 0;
-		var seconds = 0;
-		var time;
+/*----- Таймер отсчета времени после начала игры -------*/
+	var millis = 0;		//миллисекунды
+	var minutes = 0;	//минуты
+	var seconds = 0;	//секунды
+	var time;			//общее прошедшее время
+
+	var timer = setInterval(function() { 
 		
-		if (millis >=1000){
-			seconds++;
-			millis = 0;
+		if (millis >=100){	//почему именно 100, а не 1000, как должно быть? Подобрано империческим путем
+			seconds++;		//дело в том, что setInterval некорректно ведет отсчет миллисекунд
+			millis = 0;		
 		}
 
-		if (seconds >= 60){
+		if (seconds >= 60){ //тут вроде всё понятно
 			minutes++;
 			seconds = 0;
 		}
-		
-		time = minutes+':'+seconds+':'+millis/10;
-		console.log(time);
 
-		millis++;
+		time = minutes+':'+seconds+':'+millis;	//собираем строчку со временем. Нужно было применить регулярные выражения для получения 00:00:00, но времени нехватило
+		document.querySelector('.timer').innerHTML = time; //запихиваем таймер в элемент DOM с классом .timer
+		millis++; //инкрементируем millis
 
-}
-
-start.onclick = function() {
-
-	var status = true;
-
-	var millis = 0;
-
-	setTimeout(console.log("хуй"), 1000);
-
-	// while (status){
-
-	// 	setTimeout(timer(millis), 1);
-		
-	// }
-	
-
-	// var timer = function(){
-
-	// 	return cnt++
-
-	// }
-
-	// var time = setTimeout(timer(), 1);
-
-	// console.log(time);
-
+	}, 10);	//10 так же подобрано империческим путем
+///////////////////////////////////////////////////////////
+/* Данный цикл убирает все классы с цветами, если они уже были присвоены квадратам, нужно это для начала игры заново*/
 	for (var i = 0; i < divClick.length; i++ ){
 
 		for (var j = 0; j < colors.length; j++ ){
 
 			divClick[i].classList.remove(colors[j]);
 		}
-
 	}
+//////////////////////////////////////////////////////////
 
-	var randCols = [];
+	var randCols = [];					//тут хранятся рандомно сгенерированные цвета
 
-	var randomSort = function(a, b){
+	var randomSort = function(a, b){	//рандомайзер, подсмотрено на просторах интернета
 
 		return Math.random() - 0.5;
 	}
-
+/* Цикл сортирует массив colors в случайном порядке на основе массива colors,
+   поскольку нам нужно получить 8 пар цветов, рандомайзер на массив colors запускается два раза,
+   при этом, полученная сортировка пушится в массив randCols */
 	for (var i = 0; i < 2; i++){
 
 		colors.sort(randomSort);
@@ -77,67 +58,64 @@ start.onclick = function() {
 
 			randCols.push(colors[j]);
 		}
-
 	}
+
+/* Далее, всем элементам DOM из массива divClick добавляются классы из вышесозданного массива randCols,
+   затем всё это дело накрывается классом white, чтобы мы не видели сгенерированные цвета квадратов */
 
 	for ( var i = 0; i < divClick.length; i++ ){
 
 		divClick[i].classList.add(randCols[i]);
 		divClick[i].classList.add('white');
-
 	}
 
-	var compare = [];
-	var ids = [];
-	var idsTrue = [];
+/* Далее начинаем непосредственно игру */
+	var compare = [];	//массив для сравнения нажатых элементов
+	var ids = [];		//массив id текущих элементов
+	var idsTrue = [];	//массив id всех совпавших элементов во время игры
 
 	for ( var i = 0; i < divClick.length; i++ ){
 
-		//console.dir(divClick[i].id);
+		divClick[i].onclick = function(){			
 
+			if (idsTrue.indexOf(this.id) < 0){			//если id нажатого элемента не содержится в массиве до этого совпавших, продолжаем.
+														//это делается для того, чтобы уже совпавшие квадраты, не участвовали в сравнении
+				if (compare.length < 2){				//если массив сравнения элементов еще не заполнен, продолжаем
 
-		divClick[i].onclick = function(){
-
-			if (idsTrue.indexOf(this.id) < 0){
-
-				if (compare.length < 2){
-
-					compare.push(this.classList[1]);
-					ids.push(this.id);
-					this.classList.remove('white');
-				//console.dir('id '+ids);
-
-			}
-
-			if (compare.length == 2 && compare[0] == compare[1]){
-
-				//console.log("заебись");
-				//console.log(ids);
-				for (var j = 0; j < ids.length; j++){
-
-					idsTrue.push(ids[j]);
-					console.log(idsTrue);
-
+					compare.push(this.classList[1]);	//засовываем в него класс текущего элемента, classList[1] означает цвет, он идет вторым после класса .block
+					ids.push(this.id);					//засовываем id текущего элемента в массив текущих элементов
+					this.classList.remove('white');		//убираем у текущего элемента класс white, то есть делаем его видимым
 				}
 
-				compare = [];
-				ids = []
-				
+				if (compare.length == 2 && compare[0] == compare[1]){ //если массив текущих элементов заполнен, то есть выбраны два квадрата, 
+																	  //сравниваем цвета этих элементов, если они совпали, значит открываем элементы навсегда,
+					this.classList.remove('white');					  //а их id засовываем в массив совпавших элементов
+					for (var j = 0; j < ids.length; j++){
 
-			} 
+						idsTrue.push(ids[j]);
 
-			if (compare.length == 2 && compare[0] != compare[1]){
+					}
 
-				//console.log("нихуя");
+					compare = [];										//обнуляем массив с цветами текущих элементов
+					ids = []											//а также массив id текущих элементов
 
-				divClick[ids[0]].classList.add('white');
-				divClick[ids[1]].classList.add('white');
-				ids = []
-				compare = [];
+					if (idsTrue.length == divClick.length){				//если длина массива совпавших элементов совпала с длиной массива всех элементов
+																		//другими словами, если мы открыли все квадраты, то выводим модальное окно с поздравлениями и затраченным временем
+						alert('Вы выиграли! Затраченное время: ' + time);
+						clearInterval(timer);							//останавливаем таймер
+					}
+				} 
+
+				if (compare.length == 2 && compare[0] != compare[1]){	//если элементы из массива сравнения текущих эоементов не совпали, закрываем оба элемента
+																		//и чистим массив сравнения и массив с текущими id
+					divClick[ids[0]].classList.add('white');
+					divClick[ids[1]].classList.add('white');
+					ids = []
+					compare = [];
+				}
 			}
-		}
 
+		}
 	}
-}
 }
 
