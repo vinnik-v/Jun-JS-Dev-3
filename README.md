@@ -1,5 +1,6 @@
 # Jun-JS-Dev-3
-Junior JavaScript Developer (Стажёр-программист) - Задание 3
+
+Задание 3 - мини игра, суть которой открыть все парные по цветам квадраты
 
 1. Скачать файлы index.html, style.css, script.js
 2. Открыть index.html в браузере
